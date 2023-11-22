@@ -1,0 +1,35 @@
+const passport = require('passport')
+const localStrategy = require('passport-local')
+
+app.use(passport.initialize()); //initializes the passport it is middleware
+app.use(passport.session());
+passport.use(new localStrategy(userRouter.authenticate));
+passport.serializeUser(userRouter.serializeUser()); // user ka data session me store karna
+passport.deserializeUser(userRouter.deserializeUser()); // user ka data session se nikalna 
+
+
+app.get('/demo', async (req, res) => {
+  let fakeUser = new userRouter({
+    email: "student2@gmail.com",
+    username: 'deltaStudent2',
+  })
+  let registeredUser = await userRouter.register(fakeUser, 'helloworldd');
+  console.log(registeredUser)
+  res.send(registeredUser)
+})
+
+
+///demo.js
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const passportLocalMongoose = require('passport-local-mongoose')
+
+const userSchema = new Schema({
+    email: {
+        type: String,
+        require: true,
+    },
+
+})
+userSchema.plugin(passportLocalMongoose) //esle automatically username ra password schema build gardinca
+module.exports = mongoose.model('User',userSchema);
